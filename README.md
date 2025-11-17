@@ -13,7 +13,7 @@ For Ansible, it is necessary to install [Ansible](http://docs.ansible.com/ansibl
 Clone this repository with:
 
 ```shell
-git clone https://bitbucket.org/agile611/startusingansible.git
+git clone https://www.github.com/agile611/startusingansible.git
 ```
 
 ## Initial configuration
