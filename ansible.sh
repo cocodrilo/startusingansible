@@ -1,5 +1,8 @@
+# Script to install Ansible on a Ubuntu system
 apt-get update
-apt install software-properties-common -y
+# Install required packages
+apt install software-properties-common -y   
+# Add Ansible PPA and install Ansible
 apt-add-repository ppa:ansible/ansible
 apt-get install ansible net-tools -y
 # Add vagrant user to sudoers
