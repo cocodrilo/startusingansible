@@ -4,214 +4,131 @@
 
 This repository contains the code examples from the configuration management tools Ansible. It uses Vagrant to demonstrate these tools in practice.
 
+Here’s a summary of the README from the GitHub repository [agile611/startusingansible](https://github.com/agile611/startusingansible):
+
 ## Requirements
 
-For Ansible, it is necessary to install [Ansible](http://docs.ansible.com/ansible/intro_installation.html) on the host machine. This repo uses a Vagrant box based on Ubuntu and we will use APT to install ansible.
+- **Ansible**: Install Ansible on your host machine.
+- **Vagrant**: This repository uses a Vagrant box based on Ubuntu, and APT will be used to install Ansible.
+- **Virtualbox**: It is the engine for virtualize the environment.
 
-## Example code
+## Example Code
 
-Clone this repository with:
+Clone the repository:
 
-```shell
+```bash
 git clone https://www.github.com/agile611/startusingansible.git
 ```
 
-## Initial configuration
+### Initial Configuration
 
-* Start environment, we are going to need 4 ubuntu boxes (Ansible, Alfa, Bravo, Charlie)
+Start the environment, requiring four Ubuntu boxes (Ansible, Loadbalancer, Database, Webserver):
 
-```shell
-vagrant up 
+```bash
+vagrant up
 vagrant ssh ansible
 ```
+Create an SSH key to connect the VMs without password:
 
-* Starting workspace on ansible box
-
-```shell
-vagrant@ansible$ sudo apt-get update
-vagrant@ansible$ sudo apt-get install ansible -y
+```bash
+ssh-keygen
+cat /home/vagrant/.ssh/id_rsa.pub
 ```
 
-* Check your ansible installation checking the response from this command:
+Copy the public key to the VMs and set up the authorized keys:
 
-```shell
-vagrant@ansible$ ansible localhost -m setup
+```bash
+vagrant@ansible$ ssh-copy-id vagrant@192.168.11.20
+vagrant@ansible$ ssh-copy-id vagrant@192.168.11.30
+vagrant@ansible$ ssh-copy-id vagrant@192.168.11.40
 ```
 
-* Create a ssh key to connect to the webserver box just pressing enter to the requested questions:
+Verify SSH connection:
 
-```shell
-vagrant@ansible$ ssh-keygen
-vagrant@ansible$ cat /home/vagrant/.ssh/id_rsa.pub
+```bash
+ssh vagrant@192.168.11.20
 ```
 
-* Copy /home/vagrant/.ssh/id_rsa.pub into the clipboard on webserver box and execute:
+If any password is asked, the user is vagrant and the password is vagrant.
 
-```shell
-vagrant@alfa$ sudo -s
-root@alfa# mkdir /root/.ssh
-root@alfa# echo 'full contents of id_rsa.pub from ansible node' > /root/.ssh/authorized_keys
-root@alfa# chmod 700 /root/.ssh
-root@alfa# chmod 640 /root/.ssh/authorized_keys
+### Important Note
+
+The configuration file priority order is as follows:
+
+1. **ANSIBLE_CONFIG** (environment variable)
+2. **ansible.cfg** (current folder)
+3. **~/.ansible.cfg** (user home)
+4. **/etc/ansible/ansible.cfg** (general file)
+
+## Test the Environment
+
+Set up Ansible Inventory on the Ansible box:
+
+```bash
+mkdir example_ansible
+mkdir example_ansible/hosts
+nano example_ansible/hosts/all
 ```
 
-* Check if you can connect to the webserver using the ssh key (not prompting a password). 
-
-```shell
-vagrant@ansible$ ssh root@192.168.0.2
-```
-
-If you can connect, the initial config is done. Repeat this for Bravo and Charlie Vms.
-
-### IMPORTANT NOTE
-Priority order from the config files:
-* ANSIBLE_CONFIG (environment variable POSIX)
-* ansible.cfg (current folder)
-* ~/.ansible.cfg (user home from the executor)
-* /etc/ansible/ansible.cfg (general file)
-
-## Test the environment
-
-* Setup Ansible Inventory on the ansible box, create the following folders:
-
-```shell
-vagrant@ansible$ mkdir example_ansible
-vagrant@ansible$ mkdir example_ansible/hosts
-vagrant@ansible$ nano example_ansible/hosts/all
-```
-
-And on the file `hosts/all` and the following lines:
+Add the following lines to `hosts/all`:
 
 ```ini
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3.12
-
 [database]
 192.168.11.20
-
 [loadbalancer]
 192.168.11.30
-
 [webserver]
 192.168.11.40
 ```
 
-* Check if everything works executing the following command:
+Check if everything works:
 
-```shell
-vagrant@ansible$ cd example_ansible
-vagrant@ansible$ ansible -i hosts -u root -m ping all
+```bash
+cd example_ansible
+ansible -i hosts -u root -m ping all
 ```
 
-* What happen?
+### Initial Configuration and First YAML File
 
-The expected response is as follows:
-
-```shell
-192.168.0.2 | SUCCESS => {
-    "changed": false, 
-    "ping": "pong"
-}
-```
-
-## Initial configuration and first yaml file
-
-* Create the file `request.yml`
+Create the file `request.yml`:
 
 ```yaml
 ---
 - hosts: webserver
-
   tasks:
     - name: What system are you?
       command: uname -a
       register: info
-
     - name: print var
-      debug: var=info
-
+      debug:
+        var: info
     - name: print field
-      debug: var=info.stdout
-
+      debug:
+        var: info.stdout
     - name: What your name?
       command: hostname
       register: info
-
     - name: Give me your name
-      debug: var=info.stdout
+      debug:
+        var: info.stdout
 ```
 
-* Execute the following command to show what tasks are we going to execute:
+Execute the playbook:
 
-```shell
-
-vagrant@ansible$ ansible-playbook -i hosts/all -u root request.yml --list-hosts --list-tasks
+```bash
+ansible-playbook -i hosts/all -u root request.yml --list-hosts --list-tasks
+ansible-playbook -i hosts/all -u root request.yml
 ```
 
-* Execute the following command to perform the tasks described before:
+### Additional Examples
 
-```shell
-vagrant@ansible$ ansible-playbook -i hosts/all -u root request.yml
-```
+Various examples are available in the `examples` folder, covering different aspects of Ansible usage.
 
-### IMPORTANT NOTE
+## Troubleshooting
 
-The user root is used here for testing purposes and to make the environment easier to implement. Note that it is also the user which has the ssh key installed. You can add the ssh key to the user you in order to execute Ansible commands.
-
-### More examples (on examples folder)
-
-* 000_initial_examples
-* 001_apt
-* 002_become
-* 003_with_items
-* 004_services
-* 005_stack_restart
-* 006_notify_handlers
-* 007_files_copy
-* 008_pip
-* 009_files
-* 010_templates
-* 011_lineinfile
-* 012_mysql_management
-* 013_wait_for
-* 014_stack_status
-* 015_roles
-* 016_tasks_handlers
-* 017_files_templates
-* 018_site_yml
-* 019_facts
-* 020_defaults
-* 021_vars
-* 022_with_dict
-* 023_selective_removal
-* 024_continued
-* 025_vars_files_group_vars
-* 026_vault
-
-## Problems provisioning the box
-
-If you have problems provisioning the box, you can download it directly from [here](https://app.vagrantup.com/bento/boxes/ubuntu-20.04/versions/202112.19.0/providers/virtualbox.box)
-
-After that you need to know the path of the box and execute the following command:
-
-```shell
-    vagrant box add /The/Path/From/Your/Downloaded/box/bento-ubuntu-20-04.box --name bento/ubuntu-20.04
-    vagrant init bento/ubuntu-20.04
-```
-
-The init command creates a VagrantFile with your initial configuration. On the same folder where this Vagrantfile is, please execute to following command:
-
-```shell
-    vagrant up
-```
-
-After that, please connect to the box using the following command:
-
-```shell
-    vagrant ssh
-```
-
-If you get a terminal from the box, your environment is ready.
+If you encounter issues provisioning the box, you can download it directly and add it to Vagrant.
 
 ## Common networking problems
 
