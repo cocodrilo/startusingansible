@@ -1,0 +1,11 @@
+- name: Become de una sola tareas
+  hosts: all
+  tasks:
+    - name: Ping a los hosts
+      ping:
+    - name: Install joe editor
+      apt:
+        name: joe
+        state: present
+      become: yes
+      
