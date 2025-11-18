@@ -1,5 +1,5 @@
 - name: Instalar Nginx # Instalar y configurar Nginx en servidores Ubuntu
-  hosts: all # Atacar todos los hosts definidos en el inventario
+  hosts: webserver # Atacar todos los hosts definidos en el inventario
   become: yes # Escalar privilegios a root
   tasks: # Definir las tareas a ejecutar
     - name: Instalar Paquete Nginx # Instalar el paquete Nginx usando apt
