@@ -1,0 +1,5 @@
+# import_playbook soporta handlers correctamente.
+# Por lo tanto, este playbook importa otros playbooks que contienen handlers.
+- import_playbook: install-nginx.yml
+- import_playbook: handler-nginx.yml
+- import_playbook: uninstall-nginx.yml
