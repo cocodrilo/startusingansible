@@ -1,7 +1,7 @@
 - name: Usar su en lugar de sudo 
   hosts: all
   become: yes
-  become_method: su
+  become_method: sudo
   tasks:
     - name: Verificar el usuario actual
       command: whoami
