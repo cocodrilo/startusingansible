@@ -1,5 +1,5 @@
 - name: Prueba de handlers
-  hosts: all
+  hosts: webserver
   become: yes
   tasks:
     - name: Copiar archivo de configuración
