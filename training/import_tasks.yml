@@ -1,0 +1,9 @@
+# Solo admite tasks y no soporte handlers correctamente.
+# Por lo tanto, este playbook importa otros playbooks que contienen solo tasks.
+- name: gestiones nginx 
+  hosts: webserver
+  become: yes
+  tasks:
+    - import_task: nginx.yml
+    - import_task: nginx-handlers.yml
+    - import_task: uninstall-nginx.yml
