@@ -1,4 +1,4 @@
-- name: Variables para probar
+- name: Variables para probar 
   hosts: all
   become: yes
   vars:
@@ -18,3 +18,4 @@
           - "Variable 2: {{ var2 }}"
           - "Variable 3: {{ var3 }}"
           - "Puerto de la aplicación: {{ app_port }}"
+          - "Intérprete de Python: {{ ansible_python_interpreter }}"
