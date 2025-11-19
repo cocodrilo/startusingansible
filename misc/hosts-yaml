@@ -22,3 +22,8 @@ webserver:
       ansible_connection: ssh
       ansible_user: vagrant
       ansible_ssh_password: vagrant
+    ws_02:
+      ansible_host: 192.168.11.50
+      ansible_connection: ssh
+      ansible_user: vagrant
+      ansible_ssh_password: vagrant
