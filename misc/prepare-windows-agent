@@ -1,11 +1,6 @@
 Ansible WindowsResumen:
 1) Poner el Windows de Red Publica a Privada
 2) winrm quickconfig -force
-3) winrm set winrm/config/service '@{AllowUnencrypted="true"}'
-4) Set-Item -Path WSMan:\localhost\Service\Auth\Basic -Value $true
-5) Set-Item -Path WSMan:\localhost\Service\AllowUnencrypted -Value $true
-6) Set-Item -Path WSMan:\localhost\Service\Auth\Basic -Value $true
-7) New-NetFirewallRule -Name "WinRM HTTP" -DisplayName "WinRM HTTP" -Enabled True -Direction Inbound -Protocol TCP -LocalPort 5985 -Action Allow
-
-
-
+3) Set-Item -Path WSMan:\localhost\Service\Auth\Basic -Value $true
+4) Set-Item -Path WSMan:\localhost\Service\AllowUnencrypted -Value $true
+5) New-NetFirewallRule -Name "WinRM HTTP" -DisplayName "WinRM HTTP" -Enabled True -Direction Inbound -Protocol TCP -LocalPort 5985 -Action Allow
