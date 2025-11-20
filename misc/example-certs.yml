@@ -1,0 +1,24 @@
+- name: test para autenticar en máquina con certificado
+  hosts: all
+  become: yes
+  vars:
+    domain_name: "example.com"
+    cert_path: "/etc/ssl/certs/example.com.crt"
+    key_path: "/etc/ssl/private/example.com.key"
+  tasks:
+    - name: Asegurarse que existe la clave dominio
+      community.crypto.openssl_privatekey:
+        path: "{{ key_path }}"
+        size: 2048
+        state: present  
+  
+    - name: Obtener certificado via ACME (Let's Encrypt)
+      community.crypto.acme_certificate:
+        account_key_src: "/etc/ssl/private/account.key"
+        csr:
+          common_name: "{{ domain_name }}"
+        fullchain_dest: "{{ cert_path }}"
+        privatekey_dest: "{{ key_path }}"
+        provider: letsencrypt
+        terms_agreed: true
+        state: present  
